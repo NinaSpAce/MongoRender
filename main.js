@@ -63,7 +63,7 @@ app.get('/rest/list/', function(req,res){
         'tags': tags,        
     }
 
-    fs.readFile("tickets.txt", function(err,data){
+    fs.readFile('tickets.txt', 'utf8', function(err,data){
         if (err){
             console.log(err);
         }
