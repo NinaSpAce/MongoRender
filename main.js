@@ -43,9 +43,9 @@ app.get('/rest/list/', function(req,res){
             console.log("Contents of file now:\n");
             res.send(data);
         }
-       res.send('GET all tickets successful.');
-
     });
+    res.send('GET all tickets successful.');
+
   });
 app.get('/rest/ticket/:id', function(req,res){
     res.send('GET a single ticket');
