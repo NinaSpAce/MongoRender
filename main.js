@@ -44,7 +44,7 @@ app.get('/rest/list/', function(req,res){
             res.send(data);
         }
     });
-    res.send('GET all tickets successful.');
+    
 
   });
 app.get('/rest/ticket/:id', function(req,res){
