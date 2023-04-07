@@ -32,45 +32,17 @@ app.get('/say/:name', function(req, res) {
 
 app.get('/rest/list/', function(req,res){
     res.send('GET all tickets.');
-    const id = req.body.id;
-    const creation = req.body.creation;
-    const updated = req.body.updated;
-    const type = req.body.type;
-    const subject = req.body.subject;
-    const description = req.body.description;
-    const priority = req.body.priority;
-    const status = req.body.state;
-    const recipient = req.body.recipient;
-    const submitter = req.body.submitter;
-    const assignee_id= req.body.assignee_id;
-    const followers_ids = req.body.followers_ids;
-    const tags = req.body.tags;
+    
 
-
-    var data = {
-        'id': id,
-        'creation': creation,
-        'updated': updated,
-        'type': type,
-        'subject': subject,
-        'description': description,
-        'priority': priority,
-        'status': state,
-        'recipient': recipient,
-        'submitter': submitter,
-        'assignee_id': assignee_id,
-        'followers_ids': followers_ids,
-        'tags': tags,        
-    }
-
-    fs.readFile('tickets.txt', 'utf8', function(err,data){
+    fs.readFile("tickets.txt", 'utf8', (err,data) => {
         if (err){
-            console.log(err);
+            console.error(err);
+          return;
         }
         else{
             console.log("File read successfully! \n");
             console.log("Contents of file now:\n");
-            res.send(data)
+            res.send(data);
         }
        
 
@@ -105,7 +77,7 @@ app.post('/rest/ticket/', function(req,res){
         'subject': subject,
         'description': description,
         'priority': priority,
-        'status': state,
+        'status': status,
         'recipient': recipient,
         'submitter': submitter,
         'assignee_id': assignee_id,
