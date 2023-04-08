@@ -11,6 +11,10 @@ console.log('Server started at http://localhost:' + port);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(function(req, res, next) {
+  console.log(req.method, req.url);
+  next();
+});
 
 // routes will go here
 
