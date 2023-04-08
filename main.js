@@ -46,11 +46,10 @@ app.get('/rest/ticket/:id', function(req,res){
           return;
         }
         else{
-            res.send(data);
             console.log("File read successfully! \n");
             console.log("Contents of file now:\n");
             const object = JSON.parse(data);
-            const idToFind = req.params.id;
+            const idToFind = Number(req.params.id);
             const ticket = object.find(t => t.id === idToFind);
 
             if (ticket) {
