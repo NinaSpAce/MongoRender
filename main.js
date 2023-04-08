@@ -32,39 +32,35 @@ app.get('/rest/list/', function(req,res){
         else{
             console.log("File read successfully! \n");
             console.log("Contents of file now:\n");
-            res.send(data);
+            
         }
     });
     
 
   });
 app.get('/rest/ticket/:id', function(req,res){
- const searchKey = "{ id: " + req.params.id + "' }";
-    console.log('Looking for: ' + searchKey);
+ 
+ fs.readFile("tickets.txt", 'utf8', (err,data) => {
+        if (err){
+            console.error(err);
+          return;
+        }
+        else{
+            console.log("File read successfully! \n");
+            console.log("Contents of file now:\n");
+            const object = JSON.parse(data);
+            const idToFind = req.params.id;
+            const ticket = object.find(t => t.id === idToFind);
 
-// Fetch the data file
-fetch("tickets.txt")
-  .then(response => response.text()) // Get the text from the response
-  .then(data => {
-    // Split the data into an array of lines
-    const lines = data.split("\n");
-
-    // Loop through each line and check for the ID
-    lines.forEach(line => {
-      const fields = line.split(",");
-      const id = fields[0]; 
-
-      if (id === searchKey) {
-        // Found a match!
-        console.log(`Found ticket with ID ${searchKey}: ${line}`);
-      }
+            if (ticket) {
+                res.send(ticket);
+            } else {
+                res.status(404).send("Ticket not found");
+            }
+        }
     });
-  })
-  .catch(error => {
-    console.error("Error fetching data:", error);
-  });
 
-  });
+
 app.post('/rest/ticket/', function(req,res){
     res.send('CREATE a new ticket');
     const id = req.body.id;
