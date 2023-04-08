@@ -41,18 +41,29 @@ app.get('/rest/list/', function(req,res){
 app.get('/rest/ticket/:id', function(req,res){
  const searchKey = "{ id: " + req.params.id + "' }";
     console.log('Looking for: ' + searchKey);
-  
-     fs.readFile("tickets.txt", 'utf8', (err,data) => {
-        if (err){
-            console.error(err);
-          return;
-        }
-          else if(searchKey == true){
-            console.log("Ticket found! \n");
-            console.log("Contents of ticket are:\n");
-            res.send(data);
-          }
-       });
+
+// Fetch the data file
+fetch("tickets.txt")
+  .then(response => response.text()) // Get the text from the response
+  .then(data => {
+    // Split the data into an array of lines
+    const lines = data.split("\n");
+
+    // Loop through each line and check for the ID
+    lines.forEach(line => {
+      const fields = line.split(",");
+      const id = fields[0]; 
+
+      if (id === searchKey) {
+        // Found a match!
+        console.log(`Found ticket with ID ${searchKey}: ${line}`);
+      }
+    });
+  })
+  .catch(error => {
+    console.error("Error fetching data:", error);
+  });
+
   });
 app.post('/rest/ticket/', function(req,res){
     res.send('CREATE a new ticket');
