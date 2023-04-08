@@ -59,6 +59,7 @@ app.get('/rest/ticket/:id', function(req,res){
             }
         }
     });
+  });
 
 
 app.post('/rest/ticket/', function(req,res){
