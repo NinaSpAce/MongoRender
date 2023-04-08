@@ -23,16 +23,18 @@ app.get('/', function(req, res) {
 
 
 app.get('/rest/list/', function(req,res){
-    
+    const searchKey = "{ id : '" + req.params.id + "' }";
+    console.log("Looking for: " + searchKey);
+  
 
     fs.readFile("tickets.txt", 'utf8', (err,data) => {
         if (err){
             console.error(err);
           return;
         }
-        else{
-            console.log("File read successfully! \n");
-            console.log("Contents of file now:\n");
+        elseif(searchKey == true){
+            console.log("Ticket found! \n");
+            console.log("Contents of ticket now:\n");
             res.send(data);
         }
     });
@@ -40,8 +42,15 @@ app.get('/rest/list/', function(req,res){
 
   });
 app.get('/rest/ticket/:id', function(req,res){
-    res.send('GET a single ticket');
-    res.send('The ticket' + req.params.id + 'is: ');
+  const query = req.params.id;
+    console.log('The ticket' + req.params.id + 'is: ');
+  
+     fs.readFile("tickets.txt", 'utf8', (err,data) => {
+        if (err){
+            console.error(err);
+          return;
+          else if()
+         
   });
 app.post('/rest/ticket/', function(req,res){
     res.send('CREATE a new ticket');
