@@ -52,7 +52,7 @@ app.get('/rest/ticket/:id', function(req,res){
             console.log("Contents of ticket are:\n");
             res.send(data);
           }
-         
+       });
   });
 app.post('/rest/ticket/', function(req,res){
     res.send('CREATE a new ticket');
