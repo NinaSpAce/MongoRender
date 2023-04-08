@@ -20,9 +20,7 @@ app.get('/', function(req, res) {
   res.send(outstring);
 });
 
-app.get('/say/:name', function(req, res) {
-  res.send('Hello ' + req.params.name + '!');
-});
+
 
 app.get('/rest/list/', function(req,res){
     
