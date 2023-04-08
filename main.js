@@ -46,7 +46,7 @@ app.get('/rest/list/', function(req,res){
     });
   });
 app.get('/rest/ticket/:id', function(req,res){
- const id = req.params.id;
+ const id = parseInt(req.params.id);
     console.log('Looking for: ' + id);
   
      fs.readFile("./tickets.json", 'utf8', (err,jsonString) => {
