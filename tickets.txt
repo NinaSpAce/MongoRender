@@ -13,3 +13,19 @@
 "follower_ids": [235323, 234],
 "tags": ["enterprise", "printers"]
 }
+
+{
+"id": 2,
+"created_at": "2023-04-07",
+"updated_at": "2023-04-08",
+"type": "incident",
+"subject": "cables not installed correctly",
+"description": "Gotta hook up the cables to the router... get the connections",
+"priority": "med",
+"status": "open",
+"recipient": "support_example@selu.edu",
+"submitter": "christina_hoover@selu.edu",
+"assignee_id": 55555,
+"follower_ids": [55555, 2],
+"tags": ["enterprise", "cables routes"]
+}
