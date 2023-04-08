@@ -47,7 +47,7 @@ app.get('/rest/ticket/:id', function(req,res){
             console.error(err);
           return;
         }
-          elseif(searchKey == true){
+          else if(searchKey == true){
             console.log("Ticket found! \n");
             console.log("Contents of ticket are:\n");
             res.send(data);
