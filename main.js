@@ -3,6 +3,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 var fs = require('fs');
+const { send } = require('process');
 const app = express();
 const port = 3000;
 app.listen(port);
@@ -24,88 +25,73 @@ app.get('/', function(req, res) {
 
 app.get('/rest/list/', function(req,res){
 
-    fs.readFile("tickets.txt", 'utf8', (err,data) => {
+    fs.readFile("./tickets.json", 'utf8', (err,jsonString) => {
         if (err){
             console.error(err);
           return;
         }
-        else{
-            console.log("File read successfully! \n");
-            console.log("Contents of file now:\n");
-            res.send(data);
+        try{
+          const tickets = JSON.parse(jsonString);
+            console.log("File read successfully!");
+            console.log("Contents of file now: ");
+            res.json(tickets);
+        }
+        catch (err) {
+          console.error(err);
         }
     });
-    
-
   });
 app.get('/rest/ticket/:id', function(req,res){
- 
- fs.readFile("tickets.txt", 'utf8', (err,data) => {
+ const id = req.params.id;
+    console.log('Looking for: ' + id);
+  
+     fs.readFile("./tickets.json", 'utf8', (err,jsonString) => {
         if (err){
             console.error(err);
           return;
         }
-        else{
-            console.log("File read successfully! \n");
-            console.log("Contents of file now:\n");
-            const object = JSON.parse(data);
-            const idToFind = Number(req.params.id);
-            const ticket = object.find(t => t.id === idToFind);
-
-            if (ticket) {
-                res.send(ticket);
-            } else {
-                res.status(404).send("Ticket not found");
-              
+          try{
+            const tickets = JSON.parse(jsonString);
+            const ticket = tickets.find(t => t.id === id);
+            if (ticket){
+              console.log(`Ticket with ID ${id} found!`);
+              res.json(ticket);
             }
-        }
-    });
+            else{
+            console.log(`Ticket with ID ${id} not found!`);
+            res.status(404);
+            }
+          }
+          catch(err){
+            console.error(err);
+          }
+       });
   });
-
-
 app.post('/rest/ticket/', function(req,res){
-    res.send('CREATE a new ticket');
-    const id = req.body.id;
-    const creation = req.body.creation;
-    const updated = req.body.updated;
-    const type = req.body.type;
-    const subject = req.body.subject;
-    const description = req.body.description;
-    const priority = req.body.priority;
-    const status = req.body.state;
-    const recipient = req.body.recipient;
-    const submitter = req.body.submitter;
-    const assignee_id= req.body.assignee_id;
-    const followers_ids = req.body.followers_ids;
-    const tags = req.body.tags;
-
-
-    var data = {
-        'id': id,
-        'creation': creation,
-        'updated': updated,
-        'type': type,
-        'subject': subject,
-        'description': description,
-        'priority': priority,
-        'status': status,
-        'recipient': recipient,
-        'submitter': submitter,
-        'assignee_id': assignee_id,
-        'followers_ids': followers_ids,
-        'tags': tags,        
+   const data = req.body;
+   fs.readFile("./tickets.json", 'utf8', (err,jsonString) => {
+    if (err){
+        console.error(err);
+      return;
     }
-
-    var JSONdata = JSON.stringify(data);
-
-    fs.writeFile("tickets.txt", JSONdata, function(err){
+    try{
+      const currentdata = JSON.parse(jsonString);
+      currentdata.push(data);
+    
+    fs.writeFile("./tickets.json", JSON.stringify(currentdata, null, 2), (err) => {
         if (err){
-            console.log(err);
+            console.error(err);
+            res.status(500);
         }
         else{
-            console.log("File written successfully\n");
+            console.log("File written successfully.");
+            res.status(200).json(data);
         }
     });
+  }
+  catch(err){
+    console.error(err);
+    res.status(500).send("Error parsing JSON data!");
+  }
 });
-
-
+});
