@@ -1,7 +1,7 @@
 {
   "name": "ckMongoTest",
   "version": "1.0.0",
-  "description": "CKs Express Mongo Test on Render",
+  "description": "CHs Mongo Test on Render",
   "main": "testmongo.js",
   "repository": "https://github.com/ckorpio/MongoRender",
   "author": "CH",
