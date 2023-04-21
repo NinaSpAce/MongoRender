@@ -1,0 +1,25 @@
+<html>
+   <head>
+      <title>Updating Data</title>
+   </head>
+
+  
+	
+	<form action="./rest/ticket{{?id}}" method="PUT">
+	ID: <input type="text" name="id" value="{{id}}" readonly><br>
+	created_at: <input type="text" name="created_at" value="{{created_at}}"><br>
+	updated_at: <input type="text" name="updated_at" value="{{updated_at}}"><br>
+	type: <input type="text" name="type" value="{{type}}"><br>
+	subject: <input type="text" name="subject" value="{{subject}}"><br>
+	description: <input type="text" name="description" value="{{description}}"><br>
+	priority: <input type="text" name="priority" value="{{priority}}"><br>
+	status: <input type="text" name="status" value="{{status}}"><br>
+	recipient: <input type="text" name="recipient" value="{{recipient}}"><br>
+	submitter: <input type="text" name="submitter" value="{{submitter}}"><br>
+	assignee_id: <input type="text" name="assignee_id" value="{{assignee_id}}"><br>
+	follower_ids: <input type="text" name="follower_ids" value="{{follower_ids}}"><br>
+	<input type="submit" name="submit" value="Update"><p>
+	</form>
+
+   </body>
+</html>
