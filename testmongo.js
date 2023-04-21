@@ -10,11 +10,6 @@ async function run() {
     const database = client.db('CMPS415');
     const parts = database.collection('atlas');
 
-    // Query for a part that has partID '12345'
-    const query = { partID: '12345' };
-    const part = await parts.findOne(query);
-
-    console.log(part);
   } finally {
     // Ensures that the client will close when you finish/error
     await client.close();
