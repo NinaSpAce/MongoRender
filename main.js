@@ -42,11 +42,11 @@ fs.readFile('./form.html', 'utf8', (err, contents) => {
   if(err) {
       console.log('Form file Read Error', err);
       res.write("<p>Form file Read Error");
+      res.end();
   } else {
       console.log('Form has been loaded\n');
       res.write(contents + "<br>");
   }
-  res.end();
 });
 });
 
@@ -57,6 +57,7 @@ app.get('/rest/list/', async function(req,res){
     if (err) {
       console.error('Error querying MongoDB:', err);
       res.status(500);
+      res.end();
       return;
     }
     else {
@@ -76,6 +77,7 @@ const collection = await connectToDB();
       if (err) {
         console.error('Could not find ID in MongoDB.', err);
         res.status(500);
+        res.end();
         return;
       }
       else {
@@ -107,6 +109,7 @@ app.post('/rest/ticket/', async function(req,res){
     if (err) {
       console.error('Could not insert the ticket.', err);
       res.status(500);
+      res.end();
       return;
     }
     else {
@@ -114,7 +117,7 @@ app.post('/rest/ticket/', async function(req,res){
     }
     res.setHeader('Content-Type', 'application/json');
     res.redirect('/rest/list/');
- 
+    
 });
 });
 
@@ -148,6 +151,7 @@ app.delete('/rest/ticket/delete/:id', async function(req,res){
     if (err) {
       console.error('Could not delete the ticket.', err);
       res.status(500);
+      res.end();
       return;
     }
     else {
