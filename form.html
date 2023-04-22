@@ -1,16 +1,10 @@
 <html>
    <head>
-      <title>Ticket</title>
+      <title>Create Ticket</title>
    </head>
 
-  
-   <select id="CRUD-selection">
-	<option value="create">Create</option>
-	<option value="update">Update</option>
-	<option value="delete">Delete</option>
-  </select>
 
-	<form action="/" id="ticket-form" method="POST">
+	<form action="/rest/ticket/" id="ticket-form" method="POST">
 	id: <input type="text" name="id"><br>
 	created_at: <input type="text" name="created_at"><br>
 	updated_at: <input type="text" name="updated_at"><br>
@@ -26,25 +20,7 @@
 	<input type="submit" value="Submit">
 	</form>
 
-	<script>
-		const form = document.querySelector('#ticket-form');
-		const select = document.querySelector('#CRUD-selection');
-	  
-		select.addEventListener('change', function() {
-		  const value = select.value;
-	  
-		  if (value === 'create') {
-			form.action = '/rest/ticket/';
-			form.method = 'POST';
-		  } else if (value === 'update') {
-			form.action = '/rest/ticket/:id';
-			form.method = 'PUT';
-		  } else if (value === 'delete') {
-			form.action = '/rest/ticket/delete/:id';
-			form.method = 'DELETE';
-		  }
-		});
-	  </script>
+	
 
    </body>
 </html>
