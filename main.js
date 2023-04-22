@@ -1,5 +1,12 @@
 
 const { MongoClient } = require("mongodb");
+const express = require('express');
+const bodyParser = require('body-parser');
+const app = express();
+const fs = require('fs');
+const port = 3000;
+app.listen(port);
+console.log('Server started at http://localhost:' + port);
 
 // The uri string must be the connection string for the database (obtained on Atlas).
 const uri = "mongodb+srv://classuser:LJ6fvgWHY1H4eJ5C@cmps-415.joavhvm.mongodb.net/?retryWrites=true&w=majority";
@@ -13,15 +20,6 @@ const client = new MongoClient(uri);
     
     const db = client.db('CMPS415');
     const collection = db.collection('atlas');
- 
-const express = require('express');
-const bodyParser = require('body-parser');
-var fs = require('fs');
-const { send } = require('process');
-const app = express();
-const port = 3000;
-app.listen(port);
-console.log('Server started at http://localhost:' + port);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
