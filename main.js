@@ -85,6 +85,7 @@ const collection = await connectToDB();
       }
     res.setHeader('Content-Type', 'application/json');
     res.send(doc);
+    res.end();
   });
 });
 
@@ -117,30 +118,31 @@ app.post('/rest/ticket/', async function(req,res){
     }
     res.setHeader('Content-Type', 'application/json');
     res.redirect('/rest/list/');
-    
+    res.end();
+    return
 });
 });
 
-//UPDATE ticket
-app.put('/rest/ticket/:id', async function(req){
-  const collection = await connectToDB();
-  const id = parseInt(req.params.id);
-    console.log('Updating ticket with ID: ' + id);
+// //UPDATE ticket
+// app.put('/rest/ticket/:id', async function(req,res){
+//   const collection = await connectToDB();
+//   const id = parseInt(req.params.id);
+//     console.log('Updating ticket with ID: ' + id);
 
-  const form = document.querySelector('#ticket-form');
-  const formData = new FormData(form);
+//   const form = document.querySelector('#ticket-form');
+//   const formData = new FormData(form);
 
 
-  fetch(`/rest/ticket/${id}`, {
-    method: 'PUT',
-    body: formData
-  })
-  .then(response => response.json())
-  .then(data => {
-    console.log('Ticket updated:', data);
-  })
-  .catch(error => console.error('Error updating ticket:', error));
-});
+//   fetch(`/rest/ticket/${id}`, {
+//     method: 'PUT',
+//     body: formData
+//   })
+//   .then(response => response.json())
+//   .then(data => {
+//     console.log('Ticket updated:', data);
+//   })
+//   .catch(error => console.error('Error updating ticket:', error));
+// });
 
 //DELETE ticket
 app.delete('/rest/ticket/delete/:id', async function(req,res){
