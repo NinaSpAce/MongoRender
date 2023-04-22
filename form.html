@@ -31,8 +31,7 @@
 		const select = document.querySelector('#CRUD-selection');
 	  
 		select.addEventListener('change', function() {
-		  const method = select.value;
-  		  form.action = '/' + method;
+		  const value = select.value;
 	  
 		  if (value === 'create') {
 			form.action = '/rest/ticket/';
