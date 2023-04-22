@@ -7,8 +7,10 @@ const uri = "mongodb+srv://classuser:LJ6fvgWHY1H4eJ5C@cmps-415.joavhvm.mongodb.n
 
 async function run() {
 const client = new MongoClient(uri);
-console.log("Connected to MongoDB!")
   try {
+    await client.connect();
+    console.log("Connected to MongoDB!");
+    
     const db = client.db('CMPS415');
     const collection = db.collection('atlas');
  
@@ -157,4 +159,3 @@ finally {
     await client.close();
 }
 }
-run().catch(console.dir);
