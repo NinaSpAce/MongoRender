@@ -72,7 +72,7 @@ app.get('/rest/list/:id', async function(req,res){
 const collection = await connectToDB();
  const id = parseInt(req.params.id);
     console.log('Looking for: ' + id);
-    collection.findOne({ id: id }, function(err, doc) {
+    collection.findOne({ id: String(id) }, function(err, doc) {
       if (err) {
         console.error('Could not find ID in MongoDB.', err);
         res.status(500);
@@ -148,7 +148,7 @@ app.delete('/rest/ticket/delete/:id', async function(req,res){
   const collection = await connectToDB();
   const id = parseInt(req.params.id);
   console.log('Deleting ticket with ID: ' + id);
-  collection.deleteOne({id: new ObjectId(id)}, function(err, result) {
+  collection.deleteOne({id: String(id)}, function(err, result) {
     if (err) {
       console.error('Could not delete the ticket.', err);
       res.status(500);
