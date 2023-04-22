@@ -1,25 +1,32 @@
 
-const { MongoClient } = require("mongodb");
+const { MongoClient } = require("mongodb").MongoClient;
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const fs = require('fs');
 const port = 3000;
-app.listen(port);
-console.log('Server started at http://localhost:' + port);
 
 // The uri string must be the connection string for the database (obtained on Atlas).
 const uri = "mongodb+srv://classuser:LJ6fvgWHY1H4eJ5C@cmps-415.joavhvm.mongodb.net/?retryWrites=true&w=majority";
 
+const connectToDB = async () => {
+  const client = new MongoClient(uri);
 
-async function run() {
-const client = new MongoClient(uri);
-  try {
-    await client.connect();
-    console.log("Connected to MongoDB!");
-    
-    const db = client.db('CMPS415');
-    const collection = db.collection('atlas');
+  try{
+  await client.connect();
+  console.log("Connected to MongoDB!");
+  const db = client.db('CMPS415');
+  const collection = db.collection('atlas');
+  return collection;
+}
+catch(err){
+  console.error(err);
+}
+}
+
+app.listen(port);
+console.log('Server started at http://localhost:' + port);
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -50,7 +57,8 @@ fs.readFile('./form.html', 'utf8', (err, contents) => {
 });
 
 //GET all tickets
-app.get('/rest/list/', function(req,res){
+app.get('/rest/list/', async function(req,res){
+  const collection = await connectToDB();
   collection.find({}).toArray(function(err, docs) {
     if (err) {
       console.error('Error querying MongoDB:', err);
@@ -66,7 +74,8 @@ app.get('/rest/list/', function(req,res){
   });
 
 //GET by id
-app.get('/rest/list/:id', function(req,res){
+app.get('/rest/list/:id', async function(req,res){
+const collection = await connectToDB();
  const id = parseInt(req.params.id);
     console.log('Looking for: ' + id);
     collection.findOne({ id: id }, function(err, doc) {
@@ -84,7 +93,8 @@ app.get('/rest/list/:id', function(req,res){
 });
 
 //POST ticket
-app.post('/rest/ticket/', function(req,res){
+app.post('/rest/ticket/', async function(req,res){
+  const collection = await connectToDB();
   const ticket = {
     id: req.body.id,
     created_at: req.body.created_at,
@@ -108,13 +118,15 @@ app.post('/rest/ticket/', function(req,res){
     else {
       console.log('Ticket added!\n');
     }
+    res.setHeader('Content-Type', 'application/json');
     res.redirect('/rest/list/');
  
 });
 });
 
 //UPDATE ticket
-app.put('/rest/ticket/:id',function(req){
+app.put('/rest/ticket/:id', async function(req){
+  const collection = await connectToDB();
   const id = parseInt(req.params.id);
     console.log('Updating ticket with ID: ' + id);
 
@@ -134,7 +146,8 @@ app.put('/rest/ticket/:id',function(req){
 });
 
 //DELETE ticket
-app.delete('/rest/ticket/delete/:id', function(req,res){
+app.delete('/rest/ticket/delete/:id', async function(req,res){
+  const collection = await connectToDB();
   const id = parseInt(req.params.id);
   console.log('Deleting ticket with ID: ' + id);
   collection.deleteOne({id: new ObjectId(id)}, function(err, result) {
@@ -149,12 +162,4 @@ app.delete('/rest/ticket/delete/:id', function(req,res){
 })
 });
 
-}
-catch(error){
-  console.error(error);
-}
-finally {
-    await client.close();
-}
-}
-run();
+
