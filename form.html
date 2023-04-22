@@ -10,7 +10,7 @@
 	<option value="delete">Delete</option>
   </select>
 
-	<form id="ticket-form" method="POST">
+	<form action="/" id="ticket-form" method="POST">
 	id: <input type="text" name="id"><br>
 	created_at: <input type="text" name="created_at"><br>
 	updated_at: <input type="text" name="updated_at"><br>
@@ -23,7 +23,7 @@
 	submitter: <input type="text" name="submitter"><br>
 	assignee_id: <input type="text" name="assignee_id"><br>
 	follower_ids: <input type="text" name="follower_ids"><br>
-	<button type="submit">Submit</button>
+	<input type="submit" value="Submit">
 	</form>
 
 	<script>
@@ -31,7 +31,8 @@
 		const select = document.querySelector('#CRUD-selection');
 	  
 		select.addEventListener('change', function() {
-		  const value = select.value;
+		  const method = select.value;
+  		  form.action = '/' + method;
 	  
 		  if (value === 'create') {
 			form.action = '/rest/ticket/';
