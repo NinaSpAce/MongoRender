@@ -159,3 +159,4 @@ finally {
     await client.close();
 }
 }
+run();
