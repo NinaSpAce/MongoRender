@@ -4,9 +4,10 @@ const { MongoClient } = require("mongodb");
 // The uri string must be the connection string for the database (obtained on Atlas).
 const uri = "mongodb+srv://classuser:LJ6fvgWHY1H4eJ5C@cmps-415.joavhvm.mongodb.net/?retryWrites=true&w=majority";
 
-const client = new MongoClient(uri);
 
 async function run() {
+const client = await MongoClient.connect(uri);
+console.log("Connected to MongoDB!")
   try {
     const db = client.db('CMPS415');
     const collection = db.collection('atlas');
@@ -149,9 +150,11 @@ app.delete('/rest/ticket/delete/:id', function(req,res){
 });
 
 }
+catch(error){
+  console.error(error);
+}
 finally {
-  // Ensures that the client will close when you finish/error
-  await client.close();
+  client.close();
 }
 }
-run().catch(console.dir);
+run();
