@@ -1,25 +1,50 @@
 <html>
    <head>
-      <title>Updating Data</title>
+      <title>Ticket</title>
    </head>
 
   
-	
-	<form action="./rest/ticket{{?id}}" method="PUT">
-	ID: <input type="text" name="id" value="{{id}}" readonly><br>
-	created_at: <input type="text" name="created_at" value="{{created_at}}"><br>
-	updated_at: <input type="text" name="updated_at" value="{{updated_at}}"><br>
-	type: <input type="text" name="type" value="{{type}}"><br>
-	subject: <input type="text" name="subject" value="{{subject}}"><br>
-	description: <input type="text" name="description" value="{{description}}"><br>
-	priority: <input type="text" name="priority" value="{{priority}}"><br>
-	status: <input type="text" name="status" value="{{status}}"><br>
-	recipient: <input type="text" name="recipient" value="{{recipient}}"><br>
-	submitter: <input type="text" name="submitter" value="{{submitter}}"><br>
-	assignee_id: <input type="text" name="assignee_id" value="{{assignee_id}}"><br>
-	follower_ids: <input type="text" name="follower_ids" value="{{follower_ids}}"><br>
-	<input type="submit" name="submit" value="Update"><p>
+   <select id="CRUD-selection">
+	<option value="create">Create</option>
+	<option value="update">Update</option>
+	<option value="delete">Delete</option>
+  </select>
+
+	<form id="ticket-form" method="POST">
+	id: <input type="text" name="id"><br>
+	created_at: <input type="text" name="created_at"><br>
+	updated_at: <input type="text" name="updated_at"><br>
+	type: <input type="text" name="type"><br>
+	subject: <input type="text" name="subject"><br>
+	description: <input type="text" name="description"><br>
+	priority: <input type="text" name="priority"><br>
+	status: <input type="text" name="status"><br>
+	recipient: <input type="text" name="recipient"><br>
+	submitter: <input type="text" name="submitter"><br>
+	assignee_id: <input type="text" name="assignee_id"><br>
+	follower_ids: <input type="text" name="follower_ids"><br>
+	<button type="submit">Submit</button>
 	</form>
+
+	<script>
+		const form = document.querySelector('#ticket-form');
+		const select = document.querySelector('#CRUD-selection');
+	  
+		select.addEventListener('change', function() {
+		  const value = select.value;
+	  
+		  if (value === 'create') {
+			form.action = '/rest/ticket/';
+			form.method = 'POST';
+		  } else if (value === 'update') {
+			form.action = '/rest/ticket/:id';
+			form.method = 'PUT';
+		  } else if (value === 'delete') {
+			form.action = '/rest/ticket/delete/:id';
+			form.method = 'DELETE';
+		  }
+		});
+	  </script>
 
    </body>
 </html>
