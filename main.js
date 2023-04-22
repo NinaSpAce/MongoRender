@@ -42,7 +42,6 @@ fs.readFile('./form.html', 'utf8', (err, contents) => {
   if(err) {
       console.log('Form file Read Error', err);
       res.write("<p>Form file Read Error");
-      res.end();
   } else {
       console.log('Form has been loaded\n');
       res.write(contents + "<br>");
