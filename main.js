@@ -11,17 +11,11 @@ const uri = "mongodb+srv://classuser:LJ6fvgWHY1H4eJ5C@cmps-415.joavhvm.mongodb.n
 
 const connectToDB = async () => {
   const client = new MongoClient(uri);
-
-  try{
   await client.connect();
   console.log("Connected to MongoDB!");
   const db = client.db('CMPS415');
   const collection = db.collection('atlas');
   return collection;
-}
-catch(err){
-  console.error(err);
-}
 }
 
 app.listen(port);
