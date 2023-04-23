@@ -37,7 +37,7 @@ app.get('/', function(req, res) {
 });
 
 //form
-app.get('./form', function(req, res){
+app.get('/form', function(req, res){
 res.setHeader('Content-Type', 'text/html');
 fs.readFile('./form.html', 'utf8', (err, contents) => {
   if(err) {
@@ -54,7 +54,7 @@ fs.readFile('./form.html', 'utf8', (err, contents) => {
 });
 
 //GET all tickets
-app.get('./rest/list/', async function(req,res){
+app.get('/rest/list/', async function(req,res){
   const collection = await connectToDB();
   collection.find({}).toArray(function(err, docs) {
     if (err) {
@@ -73,7 +73,7 @@ app.get('./rest/list/', async function(req,res){
   });
 
 //GET by id
-app.get('./rest/list/:id', async function(req,res){
+app.get('/rest/list/:id', async function(req,res){
 const collection = await connectToDB();
  const id = parseInt(req.params.id);
     console.log('Looking for: ' + id);
@@ -95,7 +95,7 @@ const collection = await connectToDB();
 });
 
 //POST ticket
-app.post('./rest/ticket/', async function(req,res){
+app.post('/rest/ticket/', async function(req,res){
   const collection = await connectToDB();
   const ticket = {
     id: req.body.id,
@@ -129,7 +129,7 @@ res.end();
 
 
 //UPDATE ticket
-app.put('./rest/ticket/:id', async function(req,res){
+app.put('/rest/ticket/:id', async function(req,res){
   const collection = await connectToDB();
   const id = parseInt(req.params.id);
     console.log('Updating ticket with ID: ' + id);
@@ -154,7 +154,7 @@ app.put('./rest/ticket/:id', async function(req,res){
 });
 
 //DELETE ticket
-app.delete('./rest/ticket/delete/:id', async function(req,res){
+app.delete('/rest/ticket/delete/:id', async function(req,res){
   const collection = await connectToDB();
   const id = parseInt(req.params.id);
   console.log('Deleting ticket with ID: ' + id);
