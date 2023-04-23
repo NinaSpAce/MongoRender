@@ -23,6 +23,7 @@ console.log('Server started at http://localhost:' + port);
 
 
 app.use(express.json());
+app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 
 
@@ -42,9 +43,12 @@ fs.readFile('./form.html', 'utf8', (err, contents) => {
   if(err) {
       console.log('Form file Read Error', err);
       res.write("<p>Form file Read Error");
+      res.end();
+      return;
   } else {
       console.log('Form has been loaded\n');
       res.write(contents + "<br>");
+      res.end();
   }
 });
 });
@@ -60,10 +64,11 @@ app.get('/rest/list/', async function(req,res){
       return;
     }
     else {
-      console.log('Tickets retrieved!\n');
-    }
+    console.log('Tickets retrieved!\n', docs);
     res.setHeader('Content-Type', 'application/json');
     res.send(docs);
+    res.end();
+    }
   });
   });
 
@@ -80,11 +85,12 @@ const collection = await connectToDB();
         return;
       }
       else {
-        console.log('Ticket found!\n');
+        console.log('Ticket found!\n', doc);
+      res.setHeader('Content-Type', 'application/json');
+      res.send(doc);
+      res.end();
       }
-    res.setHeader('Content-Type', 'application/json');
-    res.send(doc);
-    res.end();
+
   });
 });
 
@@ -105,43 +111,47 @@ app.post('/rest/ticket/', async function(req,res){
     assignee_id: req.body.assignee_id,
     follower_ids: req.body.follower_ids
   };
-  collection.insertOne(ticket, function(err) {
+  collection.insertOne(ticket, function(err,doc) {
+  if(err) {
+    console.log('Could not add ticket', err);
+    res.status(500);
+    res.end();
+    return;
+}
+else {
+console.log('Ticket added!\n', doc);
+res.setHeader('Content-Type', 'application/json');
+res.send(doc);
+res.end();
+}
+});
+});
+
+
+//UPDATE ticket
+app.put('/rest/ticket/:id', async function(req,res){
+  const collection = await connectToDB();
+  const id = parseInt(req.params.id);
+    console.log('Updating ticket with ID: ' + id);
+
+  const filter = { id: id };
+  const update = { $set: req.body };
+  const options = { new: true };
+
+  collection.findOneAndUpdate(filter, update, options, function(err, doc) {
     if (err) {
-      console.error('Could not insert the ticket.', err);
+      console.error('Error updating ticket:', err);
       res.status(500);
       res.end();
       return;
     }
-    else {
-      console.log('Ticket added!\n');
-    }
+    console.log('Ticket updated successfully:', doc);
     res.setHeader('Content-Type', 'application/json');
-    res.redirect('/rest/list/');
+    res.send(doc);
     res.end();
-    return
+  
 });
 });
-
-// //UPDATE ticket
-// app.put('/rest/ticket/:id', async function(req,res){
-//   const collection = await connectToDB();
-//   const id = parseInt(req.params.id);
-//     console.log('Updating ticket with ID: ' + id);
-
-//   const form = document.querySelector('#ticket-form');
-//   const formData = new FormData(form);
-
-
-//   fetch(`/rest/ticket/${id}`, {
-//     method: 'PUT',
-//     body: formData
-//   })
-//   .then(response => response.json())
-//   .then(data => {
-//     console.log('Ticket updated:', data);
-//   })
-//   .catch(error => console.error('Error updating ticket:', error));
-// });
 
 //DELETE ticket
 app.delete('/rest/ticket/delete/:id', async function(req,res){
@@ -156,7 +166,10 @@ app.delete('/rest/ticket/delete/:id', async function(req,res){
       return;
     }
     else {
-      console.log('Ticket deleted!\n');
+      console.log('Ticket deleted!\n', result);
+      res.setHeader('Content-Type', 'application/json');
+      res.send(result);
+      res.end();
   }
 })
 });
