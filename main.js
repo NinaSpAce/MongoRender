@@ -92,7 +92,7 @@ const collection = await connectToDB();
       res.end();
       }
       console.log('Out of else!');
-  });
+  };
 });
 
 //POST ticket
