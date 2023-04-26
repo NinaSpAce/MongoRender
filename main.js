@@ -77,7 +77,7 @@ app.get('/rest/list/:id', async function(req,res){
 const collection = await connectToDB();
  const id = parseInt(req.params.id);
     console.log('Looking for: ' + id);
-    collection.findOne({ 'id': id) }, function(err, doc) {
+    collection.findOne({ 'id': id }), function(err, doc) {
       if (err) {
         console.log('In if!');
         console.error('Could not find ID in MongoDB.', err);
