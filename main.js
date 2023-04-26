@@ -66,7 +66,7 @@ app.get('/rest/list/', async function(req,res){
     else {
     console.log('Tickets retrieved!\n', docs);
     res.setHeader('Content-Type', 'application/json');
-    res.send(docs);
+   res.send(docs);
     res.end();
     }
   });
@@ -79,6 +79,7 @@ const collection = await connectToDB();
     console.log('Looking for: ' + id);
     collection.findOne({ id: String(id) }, function(err, doc) {
       if (err) {
+        console.log('In if!');
         console.error('Could not find ID in MongoDB.', err);
         res.status(500);
         res.end();
@@ -90,7 +91,7 @@ const collection = await connectToDB();
       res.send(doc);
       res.end();
       }
-
+      console.log('Out of else!');
   });
 });
 
