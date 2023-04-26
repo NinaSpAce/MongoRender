@@ -73,27 +73,44 @@ app.get('/rest/list/', async function(req,res){
   });
 
 //GET by id
+// app.get('/rest/list/:id', async function(req,res){
+// const collection = await connectToDB();
+//  const id = parseInt(req.params.id);
+//     console.log('Looking for: ' + id);
+//     collection.findOne({ 'id': id }), function(err, doc) {
+//       if (err) {
+//         console.log('In if!');
+//         console.error('Could not find ID in MongoDB.', err);
+//         res.status(500);
+//         res.end();
+//         return;
+//       }
+//       else {
+//         console.log('Ticket found!\n', doc);
+//       res.setHeader('Content-Type', 'application/json');
+//       res.send(doc);
+//       res.end();
+//       }
+//       console.log('Out of else!');
+//   };
+// });
+
 app.get('/rest/list/:id', async function(req,res){
-const collection = await connectToDB();
- const id = parseInt(req.params.id);
-    console.log('Looking for: ' + id);
-    collection.findOne({ 'id': id }), function(err, doc) {
-      if (err) {
-        console.log('In if!');
-        console.error('Could not find ID in MongoDB.', err);
-        res.status(500);
-        res.end();
-        return;
-      }
-      else {
-        console.log('Ticket found!\n', doc);
-      res.setHeader('Content-Type', 'application/json');
-      res.send(doc);
-      res.end();
-      }
-      console.log('Out of else!');
-  };
-});
+  const collection = await connectToDB();
+   const id = parseInt(req.params.id);
+      console.log('Looking for: ' + id);
+      const collectionPromise = collection.findOne({ 'id': id }).exec();
+      collectionPromise.then((doc)=> {
+        if (!doc) {
+          console.error('Could not find ID in MongoDB.');
+        }
+        else {
+          console.log('Ticket found!\n', doc);
+        }
+      }).catch((err) =>{
+        console.log('Error: ',err);
+    });
+  });
 
 //POST ticket
 app.post('/rest/ticket/', async function(req,res){
@@ -174,5 +191,3 @@ app.delete('/rest/ticket/delete/:id', async function(req,res){
   }
 })
 });
-
-
