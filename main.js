@@ -1,7 +1,5 @@
-
-const { MongoClient } = require("mongodb");
-const express = require('express');
 const mongoose = require('mongoose');
+const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const fs = require('fs');
@@ -10,14 +8,29 @@ const port = 3000;
 // The uri string must be the connection string for the database (obtained on Atlas).
 const uri = "mongodb+srv://classuser:LJ6fvgWHY1H4eJ5C@cmps-415.joavhvm.mongodb.net/?retryWrites=true&w=majority";
 
-const connectToDB = async () => {
-  const client = new MongoClient(uri);
-  await client.connect();
-  console.log("Connected to MongoDB!");
-  const db = client.db('CMPS415');
-  const collection = db.collection('atlas');
-  return collection;
-}
+mongoose.connect(uri)
+
+
+
+const ticket = new mongoose.Schema({
+  id: Number,
+  created_at: String,
+  updated_at: String,
+  type: String,
+  subject: String,
+  description: String,
+  priority: String,
+  status: String,
+  recipient: String,
+  submitter: String,
+  assignee_id: Number,
+  follower_ids: Number,
+});
+
+
+const Model = mongoose.model('atlas', ticket);
+const instance = new Model();
+instance.save();
 
 app.listen(port);
 console.log('Server started at http://localhost:' + port);
@@ -97,10 +110,9 @@ app.get('/rest/list/', async function(req,res){
 // });
 
 app.get('/rest/list/:id', async function(req,res){
-  const collection = await connectToDB();
    const id = parseInt(req.params.id);
       console.log('Looking for: ' + id);
-      const collectionPromise = collection.findOne({ 'id': id }).exec();
+      const collectionPromise = Model.findOne({ 'id': id }).exec();
       collectionPromise.then((doc)=> {
         if (!doc) {
           console.error('Could not find ID in MongoDB.');
@@ -192,3 +204,5 @@ app.delete('/rest/ticket/delete/:id', async function(req,res){
   }
 })
 });
+
+
