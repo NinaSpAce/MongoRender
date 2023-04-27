@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const MongoClient = require("mongodb").MongoClient;
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
@@ -7,30 +7,16 @@ const port = 3000;
 
 // The uri string must be the connection string for the database (obtained on Atlas).
 const uri = "mongodb+srv://classuser:LJ6fvgWHY1H4eJ5C@cmps-415.joavhvm.mongodb.net/?retryWrites=true&w=majority";
-
-mongoose.connect(uri)
-
-
-
-const ticket = new mongoose.Schema({
-  id: Number,
-  created_at: String,
-  updated_at: String,
-  type: String,
-  subject: String,
-  description: String,
-  priority: String,
-  status: String,
-  recipient: String,
-  submitter: String,
-  assignee_id: Number,
-  follower_ids: Number,
-});
-
-
-const Model = mongoose.model('atlas', ticket);
-const instance = new Model();
-instance.save();
+const client = new MongoClient(uri, {useNewUrlParser : true});
+const connectToDB = async () => {
+  try{
+  await client.connect();
+  console.log("Connected to MongoDB!");
+  }
+  catch(err){
+    console.error(err);
+  }
+}
 
 app.listen(port);
 console.log('Server started at http://localhost:' + port);
@@ -69,65 +55,83 @@ fs.readFile('./form.html', 'utf8', (err, contents) => {
 
 //GET all tickets
 app.get('/rest/list/', async function(req,res){
-  const collection = await connectToDB();
-  collection.find({}).toArray(function(err, docs) {
-    if (err) {
-      console.error('Error querying MongoDB:', err);
-      res.status(500);
-      res.end();
-      return;
-    }
-    else {
+  const tickets = client.db('CMPS415').collection('atlas');
+  try {
+    const docs = await tickets.find({}).toArray();
     console.log('Tickets retrieved!\n', docs);
     res.setHeader('Content-Type', 'application/json');
-   res.send(docs);
-    res.end();
-    }
-  });
-  });
+    res.send(docs);
+  } catch (err) {
+    console.error('Error querying MongoDB:', err);
+    res.status(500).send({ err: 'Internal Server Error' });
+  }
+});
 
-//GET by id
-// app.get('/rest/list/:id', async function(req,res){
-// const collection = await connectToDB();
-//  const id = parseInt(req.params.id);
-//     console.log('Looking for: ' + id);
-//     collection.findOne({ 'id': id }), function(err, doc) {
-//       if (err) {
-//         console.log('In if!');
-//         console.error('Could not find ID in MongoDB.', err);
-//         res.status(500);
-//         res.end();
-//         return;
-//       }
-//       else {
-//         console.log('Ticket found!\n', doc);
-//       res.setHeader('Content-Type', 'application/json');
-//       res.send(doc);
-//       res.end();
-//       }
-//       console.log('Out of else!');
-//   };
-// });
+
 
 app.get('/rest/list/:id', async function(req,res){
-   const id = parseInt(req.params.id);
-      console.log('Looking for: ' + id);
-      const collectionPromise = Model.findOne({ 'id': id }).exec();
-      collectionPromise.then((doc)=> {
-        if (!doc) {
-          console.error('Could not find ID in MongoDB.');
-        }
-        else {
-          console.log('Ticket found!\n', doc);
-        }
-      }).catch((err) =>{
-        console.log('Error: ',err);
-    });
+  const ticket = client.db('CMPS415').collection('atlas');
+   const ticketid = (req.params.id);
+      console.log('Looking for: ' + ticketid);
+      try{
+        const doc= await ticket.findOne({ id: ticketid });
+          console.log('Ticket found!\n', doc);  
+          res.setHeader('Content-Type', 'application/json');
+          res.send(doc);
+      }
+      catch(err){
+       console.error('Error: ', err);
+       res.status(500);
+       
+    }
   });
+
+
+//UPDATE ticket
+app.put('/rest/ticket/:id', async function(req,res){
+  const ticket = client.db('CMPS415').collection('atlas');
+  const ticketid = (req.params.id);
+    console.log('Updating ticket with ID: ' + ticketid);
+  try{
+  const filter = { id: ticketid };
+  const update = { $set: req.body };
+  const options = { new: true };
+
+  const doc = await ticket.findOneAndUpdate(filter, update, options);
+  if (doc) {
+    console.log('Ticket updated successfully:', doc);
+    res.status(200).json(doc);
+  } else {
+    console.error('Could not find ticket with ID:', ticketid);
+    res.status(404).send('Ticket not found');
+  }
+    }
+catch(err){  
+      console.error('Error updating ticket:', err);
+      res.status(500);
+    }
+});
+
+//DELETE ticket
+app.delete('/rest/ticket/delete/:id', async function(req,res){
+  const ticket = client.db('CMPS415').collection('atlas');
+  const ticketid = (req.params.id);
+  console.log('Deleting ticket with ID: ' + ticketid);
+   try{
+    const result = await ticket.deleteOne({id: ticketid});
+    console.log('Ticket ${ticketid} deleted!\n');
+    res.setHeader('Content-Type', 'application/json');
+    res.send(result); 
+    }
+    catch(err){
+      console.error('Could not delete the ticket.', err);
+      res.status(500);
+}
+});
 
 //POST ticket
 app.post('/rest/ticket/', async function(req,res){
-  const collection = await connectToDB();
+  const tickets = client.db('CMPS415').collection('atlas');
   const ticket = {
     id: req.body.id,
     created_at: req.body.created_at,
@@ -142,7 +146,8 @@ app.post('/rest/ticket/', async function(req,res){
     assignee_id: req.body.assignee_id,
     follower_ids: req.body.follower_ids
   };
-  collection.insertOne(ticket, function(err,doc) {
+  tickets.insertOne(ticket, function(err,doc) {
+    
   if(err) {
     console.log('Could not add ticket', err);
     res.status(500);
@@ -154,55 +159,6 @@ console.log('Ticket added!\n', doc);
 res.setHeader('Content-Type', 'application/json');
 res.send(doc);
 res.end();
-}
+}  
 });
 });
-
-
-//UPDATE ticket
-app.put('/rest/ticket/:id', async function(req,res){
-  const collection = await connectToDB();
-  const id = parseInt(req.params.id);
-    console.log('Updating ticket with ID: ' + id);
-
-  const filter = { id: id };
-  const update = { $set: req.body };
-  const options = { new: true };
-
-  collection.findOneAndUpdate(filter, update, options, function(err, doc) {
-    if (err) {
-      console.error('Error updating ticket:', err);
-      res.status(500);
-      res.end();
-      return;
-    }
-    console.log('Ticket updated successfully:', doc);
-    res.setHeader('Content-Type', 'application/json');
-    res.send(doc);
-    res.end();
-  
-});
-});
-
-//DELETE ticket
-app.delete('/rest/ticket/delete/:id', async function(req,res){
-  const collection = await connectToDB();
-  const id = parseInt(req.params.id);
-  console.log('Deleting ticket with ID: ' + id);
-  collection.deleteOne({id: String(id)}, function(err, result) {
-    if (err) {
-      console.error('Could not delete the ticket.', err);
-      res.status(500);
-      res.end();
-      return;
-    }
-    else {
-      console.log('Ticket deleted!\n', result);
-      res.setHeader('Content-Type', 'application/json');
-      res.send(result);
-      res.end();
-  }
-})
-});
-
-
