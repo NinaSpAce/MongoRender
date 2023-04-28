@@ -1,4 +1,5 @@
 const MongoClient = require("mongodb").MongoClient;
+var XMLJS = require('xml2js');
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
@@ -68,7 +69,7 @@ app.get('/rest/list/', async function(req,res){
 });
 
 
-
+//GET BY ID
 app.get('/rest/list/:id', async function(req,res){
   const ticket = client.db('CMPS415').collection('atlas');
    const ticketid = (req.params.id);
@@ -85,6 +86,31 @@ app.get('/rest/list/:id', async function(req,res){
        
     }
   });
+
+  //GET A XML TICKET
+  app.get('/rest/xml/ticket/:id', async function(req,res){
+    const ticket = client.db('CMPS415').collection('atlas');
+     const ticketid = (req.params.id);
+        console.log('Looking for: ' + ticketid);
+        try{
+          const doc= await ticket.findOne({ id: ticketid });
+            console.log('Ticket found!\n');  
+            if(doc){
+              const build = new XMLJS.Builder();
+              const xml = build.buildObject(doc);
+              res.set('Content-Type', 'application/xml');
+              res.send(xml);
+            }
+            else {
+              console.error('Could not find ID in MongoDB.');
+              res.status(404).send('Ticket not found');
+        }
+      }
+        catch(err){
+         console.error('Error: ', err);
+         res.status(500).send('Internal server error');         
+      }
+    });
 
 
 //UPDATE ticket
