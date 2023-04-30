@@ -80,7 +80,7 @@ app.get('/rest/list/:id', async function(req,res){
   });
 
   //GET A XML TICKET
-  app.get('/rest/xml/ticket/:id', async function(req, res) {
+  app.get('/rest/xml/list/:id', async function(req, res) {
     const ticket = client.db('CMPS415').collection('atlas');
     const ticketid = req.params.id;
     console.log('Sending a get request to grab a json object...');
