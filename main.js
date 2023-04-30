@@ -151,7 +151,9 @@ app.put('/rest/xml/ticket/:id', async function(req,res){
   if (doc) {
     console.log('XML Ticket updated successfully:', doc);
     const xmlData = doc.update;
-    const jsData = XMLJS.toJson(xmlData, { object: true });
+    const XML = new XMLJS.XMLSerializer();
+    const xmlString = XML.serializeToString(xmlData);
+    const jsData = JSON.parse(xml2json.toJson(xmlString));
     const PostResponse = await fetch('https://mongo-cmps415.onrender.com/rest/ticket/3', {
           method: 'POST',
           headers: {
