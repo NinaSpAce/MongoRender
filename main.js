@@ -1,12 +1,11 @@
 const MongoClient = require("mongodb").MongoClient;
-const XMLparser = require('js2xmlparser');
+var XMLJS = require('xml2js');
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const fs = require('fs');
-const port = 3000;
 const fetch = require('node-fetch');
-
+const port = 3000;
 
 // The uri string must be the connection string for the database (obtained on Atlas).
 const uri = "mongodb+srv://classuser:LJ6fvgWHY1H4eJ5C@cmps-415.joavhvm.mongodb.net/?retryWrites=true&w=majority";
@@ -81,31 +80,34 @@ app.get('/rest/list/:id', async function(req,res){
   });
 
   //GET A XML TICKET
-  app.get('/rest/xml/ticket/:id', async function(req,res){
+  app.get('/rest/xml/ticket/:id', async function(req, res) {
     const ticket = client.db('CMPS415').collection('atlas');
-     const ticketid = (req.params.id);
-        console.log('Looking for: ' + ticketid);
-        try{
-          const doc= await ticket.findOne({ id: ticketid });
-            console.log('Ticket found!\n');  
-            if(doc){
-              const Response = await fetch('https://mongo-cmps415.onrender.com/rest/list/3');
-              const JSONData = await Response.json();
-              const XMLData = XMLparser.parse('ticket', JSONData);
+    const ticketid = req.params.id;
+    console.log('Sending a get request to grab a json object...');
+    
+    try {
+      const doc = await ticket.findOne({ id: ticketid });
+      console.log('JSON Ticket found!\n');
+      
+      if (doc) {
+        const Response = await fetch('');
+        const JSONData = await Response.json();
+        
+        const xmlBuild = new XMLJS.Builder();
+        const xmlData = xmlBuild.buildObject(JSONData);
 
-              res.set('Content-Type', 'application/xml');
-              res.send(XMLData);
-            }
-            else {
-              console.error('Could not find ID in MongoDB.');
-              res.status(404).send('Ticket not found');
-        }
+        res.set('Content-Type', 'application/xml');
+        console.log('Ticket converted to XML!\n');
+        res.send(xmlData);
+      } else {
+        console.error('Could not find ID in MongoDB.\n');
+        res.status(404).send('Ticket not found.\n');
       }
-        catch(err){
-         console.error('Error: ', err);
-         res.status(500).send('Internal server error');         
-      }
-    });
+    } catch(err) {
+      console.error('Error: ', err);
+      res.status(500).send('Internal server error.\n');
+    }
+  });
 
 
 //UPDATE ticket
