@@ -99,7 +99,8 @@ app.get('/rest/list/:id', async function(req,res){
         res.set('Content-Type', 'application/xml');
         console.log('Ticket converted to XML!\n');
         res.send(xmlData);
-      } else {
+      } 
+      else {
         console.error('Could not find ID in MongoDB.\n');
         res.status(404).send('Ticket not found.\n');
       }
@@ -124,7 +125,55 @@ app.put('/rest/ticket/:id', async function(req,res){
   if (doc) {
     console.log('Ticket updated successfully:', doc);
     res.status(200).json(doc);
-  } else {
+  } 
+  else {
+    console.error('Could not find ticket with ID:', ticketid);
+    res.status(404).send('Ticket not found');
+  }
+    }
+catch(err){  
+      console.error('Error updating ticket:', err);
+      res.status(500);
+    }
+});
+
+//UPDATE A XML TICKET
+app.put('/rest/xml/ticket/:id', async function(req,res){
+  const ticket = client.db('CMPS415').collection('atlas');
+  const ticketid = (req.params.id);
+    console.log('Updating XML ticket with ID: ' + ticketid);
+  try{
+  const filter = { id: ticketid };
+  const update = { $set: req.body };
+  const options = { new: true };
+
+  const doc = await ticket.findOneAndUpdate(filter, update, options);
+  if (doc) {
+    console.log('Ticket updated successfully:', doc);
+    const XMLParser = new XMLJS.Parser();
+    XMLParser.parseString(doc.xmlData, async (err,jsData) => {
+      if (err) {
+        console.error('Error parsing XML data:', err);
+        res.status(500).send('Internal server error'); 
+      } 
+      else {
+        const PostResponse = await fetch('https://mongo-cmps415.onrender.com/rest/ticket/3', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(jsData)
+        });
+        if(!PostResponse.ok){
+          console.error('Error sending POST request:', PostResponse.status);
+          res.status(500).send('Internal server error.\n');
+        } else {
+          res.status(200).json(jsData);
+        }
+      }
+    });
+  } 
+  else {
     console.error('Could not find ticket with ID:', ticketid);
     res.status(404).send('Ticket not found');
   }
