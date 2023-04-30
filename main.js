@@ -90,7 +90,7 @@ app.get('/rest/list/:id', async function(req,res){
       console.log('JSON Ticket found!\n');
       
       if (doc) {
-        const Response = await fetch('');
+        const Response = await fetch('https://mongo-cmps415.onrender.com/rest/list/3');
         const JSONData = await Response.json();
         
         const xmlBuild = new XMLJS.Builder();
