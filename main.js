@@ -149,23 +149,15 @@ app.put('/rest/xml/ticket/:id', async function(req,res){
 
   const doc = await ticket.findOneAndUpdate(filter, update, options);
   if (doc) {
-    console.log('Ticket updated successfully:', doc);
-    const XMLParser = new XMLJS.Parser();
-    console.log('doc:', doc);
-    console.log('xmlData:', doc.update);
-
-    XMLParser.parseString(doc.update, async (err,jsData) => {
-      if (err) {
-        console.error('Error parsing XML data:', err);
-        res.status(500).send('Internal server error'); 
-      } 
-      else {
-        const PostResponse = await fetch('https://mongo-cmps415.onrender.com/rest/ticket/3', {
+    console.log('XML Ticket updated successfully:', doc);
+    const xmlData = doc.update;
+    const jsData = xml2json.toJson(xmlData, { object: true });
+    const PostResponse = await fetch('https://mongo-cmps415.onrender.com/rest/ticket/3', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify(jsData)
+          body: jsData
         });
         if(!PostResponse.ok){
           console.error('Error sending POST request:', PostResponse.status);
@@ -174,8 +166,6 @@ app.put('/rest/xml/ticket/:id', async function(req,res){
           res.status(200).json(jsData);
         }
       }
-    });
-  } 
   else {
     console.error('Could not find ticket with ID:', ticketid);
     res.status(404).send('Ticket not found');
