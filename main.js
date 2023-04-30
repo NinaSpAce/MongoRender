@@ -1,23 +1,16 @@
 const MongoClient = require("mongodb").MongoClient;
-var XMLJS = require('xml2js');
+const XMLparser = require('js2xmlparser');
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const fs = require('fs');
 const port = 3000;
+const fetch = require('node-fetch');
+
 
 // The uri string must be the connection string for the database (obtained on Atlas).
 const uri = "mongodb+srv://classuser:LJ6fvgWHY1H4eJ5C@cmps-415.joavhvm.mongodb.net/?retryWrites=true&w=majority";
 const client = new MongoClient(uri, {useNewUrlParser : true});
-const connectToDB = async () => {
-  try{
-  await client.connect();
-  console.log("Connected to MongoDB!");
-  }
-  catch(err){
-    console.error(err);
-  }
-}
 
 app.listen(port);
 console.log('Server started at http://localhost:' + port);
@@ -96,10 +89,12 @@ app.get('/rest/list/:id', async function(req,res){
           const doc= await ticket.findOne({ id: ticketid });
             console.log('Ticket found!\n');  
             if(doc){
-              const build = new XMLJS.Builder();
-              const xml = build.buildObject(doc);
+              const Response = await fetch('https://mongo-cmps415.onrender.com/rest/list/3');
+              const JSONData = await Response.json();
+              const XMLData = XMLparser('ticket', JSONData);
+
               res.set('Content-Type', 'application/xml');
-              res.send(xml);
+              res.send(XMLData);
             }
             else {
               console.error('Could not find ID in MongoDB.');
