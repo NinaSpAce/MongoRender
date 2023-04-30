@@ -91,7 +91,7 @@ app.get('/rest/list/:id', async function(req,res){
             if(doc){
               const Response = await fetch('https://mongo-cmps415.onrender.com/rest/list/3');
               const JSONData = await Response.json();
-              const XMLData = XMLparser('ticket', JSONData);
+              const XMLData = parse('ticket', JSONData);
 
               res.set('Content-Type', 'application/xml');
               res.send(XMLData);
