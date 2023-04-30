@@ -151,6 +151,9 @@ app.put('/rest/xml/ticket/:id', async function(req,res){
   if (doc) {
     console.log('Ticket updated successfully:', doc);
     const XMLParser = new XMLJS.Parser();
+    console.log('doc:', doc);
+    console.log('xmlData:', doc.update);
+
     XMLParser.parseString(doc.update, async (err,jsData) => {
       if (err) {
         console.error('Error parsing XML data:', err);
