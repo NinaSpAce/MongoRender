@@ -151,7 +151,7 @@ app.put('/rest/xml/ticket/:id', async function(req,res){
   if (doc) {
     console.log('Ticket updated successfully:', doc);
     const XMLParser = new XMLJS.Parser();
-    XMLParser.parseString(doc.xmlData, async (err,jsData) => {
+    XMLParser.parseString(doc.update, async (err,jsData) => {
       if (err) {
         console.error('Error parsing XML data:', err);
         res.status(500).send('Internal server error'); 
